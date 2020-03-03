@@ -1,13 +1,12 @@
 import torch
-
 import torch.nn as nn
+
 from torch.nn.functional import softplus
+from torch.nn import functional as F
 
 from torch.distributions.uniform import Uniform
 from torch.distributions.gamma import Gamma
 from torch.distributions.dirichlet import Dirichlet
-
-from torch.nn import functional as F
 
 from .helpers import NB_log_prob, ZINB_log_prob, ELBO_collapsed_Categorical
 
@@ -22,7 +21,7 @@ class BasisDecoder(nn.Module):
                  scale_invariance,
                  translation_invariance,
                  likelihood="Gaussian",
-                 nonlinearity=torch.nn.Softplus,
+                 nonlinearity=nn.Softplus,
                  inference = "collapsed",
                  alpha=1.0,
                  qalpha_init=None,
@@ -64,31 +63,31 @@ class BasisDecoder(nn.Module):
         # we will set up a neural network with one hidden layer
         if self.translation_invariance:
             # for translation-invariant case, we do the computations manually for computational efficiency
-            self.linear1 = torch.nn.Linear(z_dim, hidden_dim)
-            self.linear2 = torch.nn.Linear(hidden_dim, self.n_basis)
+            self.linear1 = nn.Linear(z_dim, hidden_dim)
+            self.linear2 = nn.Linear(hidden_dim, self.n_basis)
             self.nonlinearity = nonlinearity()
         else:
             # for non-translation-invariant case
-            self.mapping_z = torch.nn.Sequential(
-                torch.nn.Linear(z_dim, hidden_dim),
+            self.mapping_z = nn.Sequential(
+                nn.Linear(z_dim, hidden_dim),
                 nonlinearity(),
-                torch.nn.Linear(hidden_dim, self.n_basis)
+                nn.Linear(hidden_dim, self.n_basis)
             )
 
         # feature-specific variances
         if self.likelihood == "Gaussian":
-            self.noise_sd = torch.nn.Parameter(-2.0 * torch.ones(1, data_dim))
+            self.noise_sd = nn.Parameter(-2.0 * torch.ones(1, data_dim))
 
         elif self.likelihood == "NB":
-            self.nb_theta = torch.nn.Parameter(torch.zeros(1, data_dim))
+            self.nb_theta = nn.Parameter(torch.zeros(1, data_dim))
 
         elif self.likelihood == "ZINB":
-            self.nb_theta = torch.nn.Parameter(torch.zeros(1, data_dim))
+            self.nb_theta = nn.Parameter(torch.zeros(1, data_dim))
 
-            self.dropout_decoder = torch.nn.Sequential(
-                torch.nn.Linear(1, hidden_dim),
+            self.dropout_decoder = nn.Sequential(
+                nn.Linear(1, hidden_dim),
                 nonlinearity(),
-                torch.nn.Linear(hidden_dim, data_dim)
+                nn.Linear(hidden_dim, data_dim)
             )
 
         elif self.likelihood == "Bernoulli":
@@ -96,25 +95,25 @@ class BasisDecoder(nn.Module):
         else:
             raise ValueError("Unknown likelihood")
 
-        self.intercept = torch.nn.Parameter(torch.zeros(1, data_dim))
+        self.intercept = nn.Parameter(torch.zeros(1, data_dim))
 
         # we assume vector (alpha, ..., alpha)
         self.alpha_z = alpha * torch.ones(n_basis, device=self.device)
 
         # q(phi) parameters
-        self.qphi_logits = torch.nn.Parameter(torch.zeros([self.data_dim, self.n_basis]))
+        self.qphi_logits = nn.Parameter(torch.zeros([self.data_dim, self.n_basis]))
 
         if self.inference == "non-collapsed":
             # for non-collapsed inference, q(alpha)
             if qalpha_init is None:
                 raise ValueError("For non-collapsed inference need to specify q(alpha)")
-            self.qalpha_z = torch.nn.Parameter(torch.Tensor(qalpha_init))
+            self.qalpha_z = nn.Parameter(torch.Tensor(qalpha_init))
 
         if self.scale_invariance:
-            self.scaling_z = torch.nn.Parameter(torch.zeros([self.data_dim, self.n_basis]))
+            self.scaling_z = nn.Parameter(torch.zeros([self.data_dim, self.n_basis]))
 
         if self.translation_invariance:
-            self.shift_z = torch.nn.Parameter(torch.zeros([self.data_dim, self.n_basis, 1]))
+            self.shift_z = nn.Parameter(torch.zeros([self.data_dim, self.n_basis, 1]))
 
     def get_delta(self):
         # delta values (constrained within [-max_delta, max_delta]
