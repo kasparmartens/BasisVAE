@@ -27,6 +27,8 @@ class BasisDecoder(nn.Module):
                  alpha=1.0,
                  qalpha_init=None,
                  max_delta=1.5,
+                 min_lambda=0.25,
+                 max_lambda=1.75,
                  device="cpu"):
         """
         :param data_dim: Data dimensionality
@@ -41,6 +43,8 @@ class BasisDecoder(nn.Module):
         :param alpha: The Dirichlet alpha parameter (scalar)
         :param qalpha_init: Only relevant for non-collapsed inference
         :param max_delta: The range of delta values can be restricted for identifiability
+        :param min_lambda: Lower bound on lambda values
+        :param max_lambda: Upper bound on lambda values
         :param device: CPU or GPU
         """
         super().__init__()
@@ -54,8 +58,8 @@ class BasisDecoder(nn.Module):
         self.translation_invariance = translation_invariance
         self.n_basis = n_basis
         self.max_delta = max_delta
-        self.min_lambda = 0.25
-        self.max_lambda = 1.75
+        self.min_lambda = min_lambda
+        self.max_lambda = max_lambda
 
         # we will set up a neural network with one hidden layer
         if self.translation_invariance:
