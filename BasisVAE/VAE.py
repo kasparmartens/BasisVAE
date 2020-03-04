@@ -61,7 +61,10 @@ class VAE(nn.Module):
         batch_scale = N / batch_size
 
         if verbose:
-            print(f"Fitting BasisVAE.\n\tData set size {N}, batch size {batch_size}, number of basis funs {self.decoder.n_basis}\n")
+            print(f"Fitting BasisVAE.\n"
+                  f"\tScale-invariance={self.decoder.scale_invariance}"
+                  f"\tTranslation-invariance={self.decoder.translation_invariance}\n")
+            print(f"\tData set size {N}, batch size {batch_size}, number of basis funs {self.decoder.n_basis}.\n")
 
         for epoch in range(n_epochs):
 
@@ -79,4 +82,3 @@ class VAE(nn.Module):
 
             if epoch % logging_freq == 0:
                 print(f"\tEpoch: {epoch:2}. Total loss: {train_loss:11.2f}")
-
