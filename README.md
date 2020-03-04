@@ -1,6 +1,6 @@
 # BasisVAE
 
-This is an implementation of our paper **BasisVAE: Translation-invariant feature-level clustering with Variational Autoencoders**
+This is our PyTorch implementation of our AISTATS 2020 paper **BasisVAE: Translation-invariant feature-level clustering with Variational Autoencoders**
 
 ![](fig/BasisVAE_schema.png)
 
@@ -10,8 +10,6 @@ See [this Colab notebook](https://colab.research.google.com/drive/1q8rp3k4aAzog3
 
 ### Installation
 
-The package can be installed
-
 ```
-!pip install git+https://github.com/kasparmartens/BasisVAE.git
+pip install git+https://github.com/kasparmartens/BasisVAE.git
 ```
