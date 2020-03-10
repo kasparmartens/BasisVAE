@@ -10,6 +10,20 @@ It would be desirable to construct a joint modelling framework for simultaneous 
 
 ![](fig/decoder_with_whitespace.png)
 
+### Illustrations on synthetic data
+
+We illustrate BasisVAE model fitting on the following toy data set that has four groups of features:
+
+![](fig/toy_data.png)
+
+Here is the inferred scale-invariant BasisVAE:
+
+![](fig/anim1.gif)
+
+and here we additionally allow translation invariance
+
+![](fig/anim2.gif)
+
 ### Demo notebook
 
 See [this Colab notebook](https://colab.research.google.com/drive/1q8rp3k4aAzog3rhsF2at76wysMSqddO5) for a toy example demo. 
