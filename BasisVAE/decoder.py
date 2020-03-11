@@ -247,7 +247,7 @@ class BasisDecoder(nn.Module):
 
         if self.scale_invariance:
             lambdas = self.get_lambda()
-            prior_loss += Gamma(torch.ones_like(lambdas), torch.ones_like(lambdas)).log_prob(lambdas).sum()
+            prior_loss -= Gamma(torch.ones_like(lambdas), torch.ones_like(lambdas)).log_prob(lambdas).sum()
 
         loglik = batch_scale * self.loglik(y_obs, y_pred, dropout_prob_logit, theta)
 
